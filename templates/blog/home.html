@@ -1,0 +1,135 @@
+
+{% extends "blog/base.html" %}
+
+{% block title %}InkSpace | Discover Stories{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+    <span class="eyebrow">IDEAS. STORIES. PERSPECTIVES.</span>
+
+    <h1>Every story deserves<br>its own space.</h1>
+
+    <p>
+        Discover thoughtful articles and share your
+        perspective with the world.
+    </p>
+
+    {% if user.is_authenticated %}
+        <a href="{% url 'create_post' %}" class="btn-primary">
+            Start Writing
+        </a>
+    {% else %}
+        <a href="{% url 'register' %}" class="btn-primary">
+            Join InkSpace
+        </a>
+    {% endif %}
+</section>
+
+<section class="explore-section">
+
+    <h2>Explore Stories</h2>
+
+    <form method="GET" class="search-form">
+        <input
+            type="search"
+            name="q"
+            value="{{ query }}"
+            placeholder="Search articles..."
+        >
+
+        <select name="category">
+            <option value="">All Categories</option>
+
+            {% for category in categories %}
+                <option
+                    value="{{ category.slug }}"
+                    {% if selected_category == category.slug %}selected{% endif %}
+                >
+                    {{ category.name }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button type="submit" class="btn-primary">Search</button>
+    </form>
+
+    <div class="posts-grid">
+
+        {% for post in posts %}
+
+            <article class="post-card">
+
+                {% if post.cover_image %}
+                    <img
+                        src="{{ post.cover_image.url }}"
+                        alt="{{ post.title }}"
+                    >
+                {% endif %}
+
+                <div class="post-card-body">
+
+                    {% if post.category %}
+                        <span class="category-tag">
+                            {{ post.category.name }}
+                        </span>
+                    {% endif %}
+
+                    <h3>
+                        <a href="{% url 'post_detail' post.slug %}">
+                            {{ post.title }}
+                        </a>
+                    </h3>
+
+                    <p>
+                        {{ post.content|truncatewords:25 }}
+                    </p>
+
+                    <small>
+                        By {{ post.author.username }}
+                        · {{ post.published_at|date:"d M Y" }}
+                    </small>
+
+                </div>
+
+            </article>
+
+        {% empty %}
+
+            <div class="empty-state">
+                <h3>No stories found</h3>
+                <p>Try another search or category.</p>
+            </div>
+
+        {% endfor %}
+
+    </div>
+    
+{% if page_obj.has_other_pages %}
+
+<nav class="pagination">
+
+    {% if page_obj.has_previous %}
+        <a href="?q={{ query|urlencode }}&category={{ selected_category|urlencode }}&page={{ page_obj.previous_page_number }}">
+            Previous
+        </a>
+    {% endif %}
+
+    <span>
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    </span>
+
+    {% if page_obj.has_next %}
+        <a href="?q={{ query|urlencode }}&category={{ selected_category|urlencode }}&page={{ page_obj.next_page_number }}">
+            Next
+        </a>
+    {% endif %}
+
+</nav>
+
+{% endif %}
+
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,29 @@
+
+{% extends "blog/base.html" %}
+
+{% block title %}{{ page_title }} | InkSpace{% endblock %}
+
+{% block content %}
+
+<section class="editor-card">
+
+    <h1>{{ page_title }}</h1>
+    <p>Write something worth sharing.</p>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit" class="btn-primary">
+            Save Article
+        </button>
+
+        <a href="{% url 'dashboard' %}" class="cancel-link">
+            Cancel
+        </a>
+    </form>
+
+</section>
+
+{% endblock %}

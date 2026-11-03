@@ -1,0 +1,85 @@
+
+{% extends "blog/base.html" %}
+
+{% block title %}{{ post.title }} | InkSpace{% endblock %}
+
+{% block content %}
+
+<article class="article-detail">
+
+    {% if post.cover_image %}
+        <img
+            src="{{ post.cover_image.url }}"
+            alt="{{ post.title }}"
+            class="article-cover"
+        >
+    {% endif %}
+
+    {% if post.category %}
+        <span class="category-tag">{{ post.category.name }}</span>
+    {% endif %}
+
+    <h1>{{ post.title }}</h1>
+
+    <p class="article-meta">
+        By {{ post.author.username }}
+        · {{ post.published_at|date:"d M Y" }}
+    </p>
+
+    <div class="article-content">
+        {{ post.content|linebreaks }}
+    </div>
+
+    {% if user == post.author %}
+        <a href="{% url 'edit_post' post.slug %}">Edit Article</a>
+    {% endif %}
+
+</article>
+
+
+<!-- Comment Section -->
+<section class="comments-section">
+
+    <h2>Discussion</h2>
+    <p>Share your thoughts about this article.</p>
+
+    <form method="POST" class="comment-form">
+        {% csrf_token %}
+
+        {{ comment_form.as_p }}
+
+        <button type="submit" class="btn-primary">
+            Submit Comment
+        </button>
+    </form>
+
+    <!-- Display Approved Comments -->
+    <div class="comments-list">
+
+        <h3>Approved Comments ({{ comments.count }})</h3>
+
+        {% for comment in comments %}
+
+            <article class="comment-card">
+
+                <h4>{{ comment.name }}</h4>
+
+                <small>
+                    {{ comment.created_at|date:"d M Y" }}
+                </small>
+
+                <p>{{ comment.body|linebreaks }}</p>
+
+            </article>
+
+        {% empty %}
+
+            <p>No comments yet. Be the first to comment!</p>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,78 @@
+
+{% extends "blog/base.html" %}
+
+{% block title %}Dashboard | InkSpace{% endblock %}
+
+{% block content %}
+
+<section class="dashboard">
+
+    <div class="dashboard-heading">
+        <div>
+            <h1>Your Dashboard</h1>
+            <p>Welcome back, {{ user.first_name|default:user.username }}.</p>
+        </div>
+
+        <a href="{% url 'create_post' %}" class="btn-primary">
+            + Write Article
+        </a>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h2>{{ total_posts }}</h2>
+            <p>Total Articles</p>
+        </div>
+
+        <div class="stat-card">
+            <h2>{{ published_posts }}</h2>
+            <p>Published</p>
+        </div>
+
+        <div class="stat-card">
+            <h2>{{ draft_posts }}</h2>
+            <p>Drafts</p>
+        </div>
+    </div>
+
+    <h2>Your Articles</h2>
+
+    {% for post in posts %}
+        <article class="dashboard-post">
+
+            <div>
+                <h3>{{ post.title }}</h3>
+
+                <p>
+                    {{ post.status }} ·
+                    {{ post.updated_at|date:"d M Y" }}
+                </p>
+            </div>
+
+            <div class="post-actions">
+                {% if post.status == "PUBLISHED" %}
+                    <a href="{% url 'post_detail' post.slug %}">View</a>
+                {% endif %}
+
+                <a href="{% url 'edit_post' post.slug %}">Edit</a>
+
+                <a href="{% url 'delete_post' post.slug %}">
+                    Delete
+                </a>
+            </div>
+
+        </article>
+
+    {% empty %}
+        <div class="empty-state">
+            <h3>No articles yet</h3>
+            <p>Your first story is waiting to be written.</p>
+            <a href="{% url 'create_post' %}" class="btn-primary">
+                Create your first article
+            </a>
+        </div>
+    {% endfor %}
+
+</section>
+
+{% endblock %}

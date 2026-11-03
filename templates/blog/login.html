@@ -1,0 +1,38 @@
+
+{% extends "blog/base.html" %}
+
+{% block title %}Login | InkSpace{% endblock %}
+
+{% block content %}
+
+<section class="auth-card">
+    <h1>Welcome back</h1>
+    <p>Log in to continue to InkSpace.</p>
+
+    {% if form.errors %}
+        <p class="error-message">
+            Invalid username or password.
+        </p>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        {% if next %}
+            <input type="hidden" name="next" value="{{ next }}">
+        {% endif %}
+
+        <button type="submit" class="btn-primary">
+            Login
+        </button>
+    </form>
+
+    <p class="auth-footer">
+        Don't have an account?
+        <a href="{% url 'register' %}">Register</a>
+    </p>
+</section>
+
+{% endblock %}
